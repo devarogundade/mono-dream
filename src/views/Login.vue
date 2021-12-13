@@ -70,7 +70,7 @@ export default {
 
       axios
         .post(
-          "http://revoart.tech/api/login?email=" +
+          "https://revoart.tech/api/login?email=" +
             this.email +
             "&password=" +
             this.password

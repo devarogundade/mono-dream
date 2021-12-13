@@ -27,7 +27,7 @@
           </ul>
 
           <img
-          v-if="token != null && code == null"
+            v-if="token != null && code == null"
             src="../assets/mono.png"
             v-on:click="launchMono"
             class="mobile mono"
@@ -40,9 +40,16 @@
       </div>
 
       <div class="item">
-        <h3>Receipts</h3>
+        <div class="tab">
+          <div v-on:click="left = true" :class="left ? 'active' : ''">
+            My Tickets
+          </div>
+          <div v-on:click="left = false" :class="left ? '' : 'active'">
+            Transactions
+          </div>
+        </div>
 
-        <div class="section">
+        <div class="section" v-if="left">
           <div class="head" :class="!active ? 'nhead' : ''">
             <h3>December</h3>
             <img
@@ -70,7 +77,6 @@
                   <p>
                     <span>Time : </span> {{ time(ticket.ticket.created_at) }}
                   </p>
-                  <p><span>Type : </span> Debit</p>
                 </div>
 
                 <div class="border"></div>
@@ -80,13 +86,14 @@
                     <span>Amount: </span> ₦
                     {{ ticket.ticket.amount.toFixed(2) / 100 }}
                   </p>
-                  <p><span>Narraton : </span>Bought some thing</p>
-                  <p><span>Category : </span> E-channel</p>
+                  <p><span>Narraton : </span>Bought a Ticket</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
+
+        <transactions v-else />
       </div>
     </div>
 
@@ -102,14 +109,16 @@
 <script>
 import axios from "axios";
 import ViewTicket from "../components/ViewTicket.vue";
+import Transactions from "../components/Transactions.vue";
 
 export default {
-  components: { ViewTicket },
+  components: { ViewTicket, Transactions },
   data() {
     return {
       tickets: [],
       loading: false,
-      active: false,
+      active: true,
+      left: true,
 
       menu: true,
 
@@ -118,6 +127,7 @@ export default {
       ticket: null,
       token: null,
       code: null,
+      auth: null,
     };
   },
 
@@ -125,7 +135,23 @@ export default {
     this.getTickets();
 
     this.getUser();
-    this.getTrx();
+
+    const options = {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "mono-sec-key": "test_sk_o5brlJBSALqrFJXONjP1",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ code: this.code }),
+    };
+
+    fetch("https://api.withmono.com/account/auth", options)
+      .then((response) => response.json())
+      .then((response) => {
+        this.getTrx(response.id);
+      })
+      .catch((err) => console.error(err));
   },
 
   beforeMount() {
@@ -138,6 +164,11 @@ export default {
       if (element.startsWith("code=")) {
         this.code = element.replace("code=", "");
       }
+      if (element.startsWith("auth=")) {
+        this.auth = element.replace("auth=", "");
+      } else {
+        this.auth = null;
+      }
     });
   },
 
@@ -146,7 +177,7 @@ export default {
       this.loading = true;
 
       axios
-        .get("http://revoart.tech/api/users/" + this.token)
+        .get("https://revoart.tech/api/users/" + this.token)
         .then((response) => {
           const data = response.data;
 
@@ -174,21 +205,22 @@ export default {
       const expires = "expires=" + date.toUTCString();
       document.cookie = "rust=" + ";" + expires + ";path=/";
       document.cookie = "code=" + ";" + expires + ";path=/";
+      document.cookie = "auth=" + ";" + expires + ";path=/";
 
       this.$router.push("/");
     },
 
-    getTrx() {
+    getTrx(id) {
       const options = {
         method: "GET",
         headers: {
           Accept: "application/json",
-          "mono-sec-key": "live_sk_XdFoqaOacwnEcUCgAvI3",
+          "mono-sec-key": "test_sk_o5brlJBSALqrFJXONjP1",
         },
       };
 
       fetch(
-        "https://api.withmono.com/accounts/" + this.code + "/transactions",
+        "https://api.withmono.com/accounts/" + id + "/transactions",
         options
       )
         .then((response) => response.json())
@@ -230,7 +262,7 @@ export default {
       this.loading = true;
 
       axios
-        .get("http://revoart.tech/api/users/" + this.token + "/tickets")
+        .get("https://revoart.tech/api/users/" + this.token + "/tickets")
         .then((response) => {
           const data = response.data;
 
@@ -254,13 +286,14 @@ export default {
 
 <style scoped>
 .mobile {
-    display: none;
+  display: none;
 }
 .container {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow-x: hidden !important;
 }
 .tickets {
   width: 100%;
@@ -268,6 +301,7 @@ export default {
   align-items: center;
   flex-direction: column;
   justify-content: center;
+  overflow-x: hidden !important;
 }
 
 .header {
@@ -409,6 +443,7 @@ ul img {
   width: 1000px;
   background: #ebebeb;
   border-radius: 4px;
+  margin-top: 50px;
   height: fit-content !important;
 }
 
@@ -439,6 +474,36 @@ ul img {
   transform: rotate(180deg);
 }
 
+.tab {
+  width: 1000px;
+  max-width: 80vw !important;
+  height: 50px !important;
+  overflow-x: unset !important;
+  background: #c4c4c4;
+  margin-top: -40px;
+  border-radius: 4px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+}
+
+.tab div {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 20px;
+  align-items: center;
+  border-radius: 4px;
+  user-select: none;
+  height: 100%;
+  cursor: pointer;
+}
+
+.tab .active {
+  background: #949494;
+}
+
 .head .active {
   transform: rotate(0deg);
 }
@@ -461,7 +526,8 @@ ul img {
     flex-direction: column;
     justify-content: center;
   }
-  .header, .section {
+  .header,
+  .section {
     width: 1200px;
   }
   .header,
@@ -499,8 +565,6 @@ ul img {
     margin-top: 50px;
   }
 
- 
-
   .mobile {
     display: none;
   }
@@ -520,7 +584,8 @@ ul img {
     flex-direction: column;
     justify-content: center;
   }
-  .header, .section {
+  .header,
+  .section {
     width: 1000px;
   }
   .header,
@@ -585,7 +650,8 @@ ul img {
     flex-direction: column;
     justify-content: center;
   }
-  .header, .section {
+  .header,
+  .section {
     width: 800px;
   }
   .header,
@@ -629,36 +695,37 @@ ul img {
     flex-direction: column;
     justify-content: center;
   }
-  .header, .section {
+  .header,
+  .section {
     width: 700px;
   }
 
-.section {
+  .section {
     width: 500px;
   }
 
   .head h3 {
-      font-size: 20px;
+    font-size: 20px;
   }
-  .products, .head {
-      padding: 20px;
+  .products,
+  .head {
+    padding: 20px;
   }
   .products .product {
-      padding: 10px;
+    padding: 10px;
   }
   .product .others {
-      row-gap: 10px;
-      flex-direction: column;
-      margin-bottom: 30px;
+    row-gap: 10px;
+    flex-direction: column;
+    margin-bottom: 30px;
   }
   .others .border {
-      width: 100px;
-      height: 2px;
+    width: 100px;
+    height: 2px;
   }
-  .product
-  .others img {
-      width: 100px;
-      height: 100px;
+  .product .others img {
+    width: 100px;
+    height: 100px;
   }
   .header ul {
     position: fixed;
@@ -716,7 +783,8 @@ ul img {
     flex-direction: column;
     justify-content: center;
   }
-  .header, .section {
+  .header,
+  .section {
     width: 600px;
   }
   .header ul {
@@ -774,7 +842,8 @@ ul img {
     flex-direction: column;
     justify-content: center;
   }
-  .header, .section {
+  .header,
+  .section {
     width: 500px;
   }
   .header ul {
@@ -833,7 +902,8 @@ ul img {
     flex-direction: column;
     justify-content: center;
   }
-  .header, .section {
+  .header,
+  .section {
     width: 450px;
   }
   .header ul {
@@ -892,7 +962,8 @@ ul img {
     flex-direction: column;
     justify-content: center;
   }
-  .header, .section {
+  .header,
+  .section {
     width: 350px;
   }
   .header ul {
@@ -940,8 +1011,6 @@ ul img {
     margin-top: 50px;
   }
 
- 
-
   .mobile {
     display: inline;
   }
@@ -961,7 +1030,8 @@ ul img {
     flex-direction: column;
     justify-content: center;
   }
-  .header, .section {
+  .header,
+  .section {
     width: 400px;
   }
   .header ul {
@@ -1020,7 +1090,8 @@ ul img {
     flex-direction: column;
     justify-content: center;
   }
-  .header, .section {
+  .header,
+  .section {
     width: 300px;
   }
   .header ul {

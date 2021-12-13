@@ -125,7 +125,7 @@ export default {
     claim(id) {
       this.claiming = id;
       axios
-        .get("http://revoart.tech/api/users/" + this.token + "/claim")
+        .get("https://revoart.tech/api/users/" + this.token + "/claim")
         .then((response) => {
           const data = response.data;
 
@@ -143,6 +143,7 @@ export default {
       const expires = "expires=" + date.toUTCString();
       document.cookie = "rust=" + ";" + expires + ";path=/";
       document.cookie = "code=" + ";" + expires + ";path=/";
+      document.cookie = "auth=" + ";" + expires + ";path=/";
 
       this.$router.push("/");
     },
@@ -167,7 +168,7 @@ export default {
       this.loading = true;
 
       axios
-        .get("http://revoart.tech/api/users/" + this.token)
+        .get("https://revoart.tech/api/users/" + this.token)
         .then((response) => {
           const data = response.data;
 

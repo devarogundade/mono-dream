@@ -25,6 +25,7 @@ export default {
   width: 100%;
   height: 100%;
   display: flex;
+            overflow-x: hidden;
   align-items: center;
   justify-content: center;
 }
@@ -32,10 +33,12 @@ export default {
 .view {
   width: 600px;
   height: 450px;
+  max-width: 80%;
   background: white;
   border-radius: 6px;
   text-align: center;
   display: flex;
+            overflow-x: hidden;
   align-items: center;
   flex-direction: column;
   row-gap: 50px;

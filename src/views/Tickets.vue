@@ -27,7 +27,7 @@
           </ul>
 
           <img
-          v-if="token != null && code == null"
+            v-if="token != null && code == null"
             src="../assets/mono.png"
             v-on:click="launchMono"
             class="mobile mono"
@@ -92,6 +92,7 @@ export default {
       ticket: null,
       token: null,
       code: null,
+      nextpage: null,
     };
   },
 
@@ -129,7 +130,7 @@ export default {
       this.loading = true;
 
       axios
-        .get("http://revoart.tech/api/users/" + this.token)
+        .get("https://revoart.tech/api/users/" + this.token)
         .then((response) => {
           const data = response.data;
 
@@ -147,8 +148,27 @@ export default {
       const expires = "expires=" + date.toUTCString();
       document.cookie = "rust=" + ";" + expires + ";path=/";
       document.cookie = "code=" + ";" + expires + ";path=/";
+      document.cookie = "auth=" + ";" + expires + ";path=/";
 
       this.$router.push("/");
+    },
+
+    next() {
+      window.onscroll = () => {
+        let bottomOfWindow =
+          document.documentElement.scrollTop + window.innerHeight >=
+          document.documentElement.offsetHeight - 100;
+        if (bottomOfWindow && this.nextpage) {
+          axios.get(this.nextpage).then((response) => {
+            if (response.data.status == true) {
+              this.nextpage = response.data.data.next_page_url;
+              response.data.data.data.forEach((element) => {
+                this.tickets.push(element);
+              });
+            }
+          });
+        }
+      };
     },
 
     launchMono() {
@@ -171,13 +191,16 @@ export default {
     getTickets() {
       this.loading = true;
 
-      axios.get("http://revoart.tech/api/tickets").then((response) => {
+      axios.get("https://revoart.tech/api/tickets").then((response) => {
         const data = response.data;
 
         if (data.status == true) {
           this.tickets = data.data.data;
-          console.log(this.tickets);
+          console.log(response.data.data.next_page_url);
         }
+
+        this.nextpage = response.data.data.next_page_url;
+        this.next();
 
         this.loading = false;
       });
@@ -193,7 +216,7 @@ export default {
 
 <style scoped>
 .mobile {
-    display: none;
+  display: none;
 }
 .container {
   width: 100%;

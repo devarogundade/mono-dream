@@ -70,7 +70,7 @@ export default {
     sign() {
       axios
         .get(
-          "http://revoart.tech/api/users/" +
+          "https://revoart.tech/api/users/" +
             this.token +
             "/pay?ticket_id=" +
             this.ticket.id
@@ -84,7 +84,7 @@ export default {
       let _this = this;
       // eslint-disable-next-line no-undef
       let handler = PaystackPop.setup({
-        key: "live_sk_XdFoqaOacwnEcUCgAvI3",
+        key: "pk_test_1ccb1a7fa86dfb20a470bddb14bc835ac32849ef",
         email: _this.user.email,
         amount: _this.ticket.amount,
         currency: "NGN",
@@ -127,6 +127,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+            overflow-x: hidden;
 }
 
 .view {
@@ -135,6 +136,7 @@ export default {
   background: white;
   border-radius: 6px;
   display: flex;
+            overflow-x: hidden;
   align-items: center;
   position: relative;
 }
