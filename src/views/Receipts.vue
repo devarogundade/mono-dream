@@ -18,7 +18,7 @@
               <a href="#/nfts">NFTs</a>
             </li>
             <li>
-              <a v-on:click="logout()" v-if="token">Logout</a>
+              <a v-on:click="logout()" v-if="token" class="cursor">Logout</a>
               <a href="#/login" v-else>Login</a>
             </li>
             <li v-if="token != null && code == null">
@@ -89,6 +89,13 @@
                   <p><span>Narraton : </span>Bought a Ticket</p>
                 </div>
               </div>
+            </div>
+
+            <div class="empty" v-if="tickets.length <= 0">
+              Hi, you have no Tickets <br />
+              purchase a ticket and receive a NFT. <br />
+              <br />
+              <a href="#/tickets">Go to tickets</a>
             </div>
           </div>
         </div>
@@ -285,6 +292,25 @@ export default {
 </script>
 
 <style scoped>
+.empty {
+  text-align: center;
+  font-size: 20px;
+  display: flex;
+  margin-top: 20px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.empty a {
+  background: #d0310e;
+  color: white;
+  padding: 10px;
+  font-weight: bold;
+  border-radius: 4px;
+  width: 250px;
+  display: block;
+}
+
 .mobile {
   display: none;
 }

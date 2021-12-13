@@ -87,7 +87,7 @@ export default {
 
             this.$router.push("tickets");
           } else {
-            alert(data.message)
+            alert('Enter a valid email and password greater than 6')
           }
 
           this.loading = false;

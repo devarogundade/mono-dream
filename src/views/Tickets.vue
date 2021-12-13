@@ -18,7 +18,7 @@
               <a href="#/nfts">NFTs</a>
             </li>
             <li>
-              <a v-on:click="logout()" v-if="token">Logout</a>
+              <a v-on:click="logout()" v-if="token" class="cursor">Logout</a>
               <a href="#/login" v-else>Login</a>
             </li>
             <li v-if="token != null && code == null">
@@ -218,6 +218,7 @@ export default {
 .mobile {
   display: none;
 }
+
 .container {
   width: 100%;
   display: flex;
