@@ -195,7 +195,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-            overflow-x: hidden;
+  overflow-x: hidden;
 }
 .home {
   width: 100%;
@@ -203,7 +203,7 @@ export default {
   align-items: center;
   flex-direction: column;
   justify-content: center;
-            overflow-x: hidden;
+  overflow-x: hidden;
 }
 .header {
   height: 100px;

@@ -25,7 +25,7 @@ export default {
   width: 100%;
   height: 100%;
   display: flex;
-            overflow-x: hidden;
+  overflow-x: hidden;
   align-items: center;
   justify-content: center;
 }
@@ -38,7 +38,7 @@ export default {
   border-radius: 6px;
   text-align: center;
   display: flex;
-            overflow-x: hidden;
+  overflow-x: hidden;
   align-items: center;
   flex-direction: column;
   row-gap: 50px;

@@ -190,19 +190,21 @@ export default {
 
 <style scoped>
 .mobile {
-    display: none;
+  display: none;
 }
 .container {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow-x: hidden;
 }
 .nfts {
   width: 100%;
   display: flex;
   align-items: center;
   flex-direction: column;
+  overflow-x: hidden;
   justify-content: center;
 }
 .header {
