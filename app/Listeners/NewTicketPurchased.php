@@ -33,9 +33,7 @@ class NewTicketPurchased implements ShouldQueue
         $wallet = User::find($user->id)->wallet;
 
         if (!$wallet) {
-            $wallet = User::find($user->id)->wallet();
-            dd($wallet);
-
+            User::find($user->id)->wallet();
             $wallet = User::find($user->id)->wallet;
         }
 

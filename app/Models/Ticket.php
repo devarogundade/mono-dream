@@ -11,7 +11,7 @@ class Ticket extends Model
 
     protected $guarded = [];
 
-    protected $with = ['images', 'likes', 'reviews', 'user'];
+    protected $with = ['images', 'likes', 'reviews', 'user', 'categories'];
 
      protected $withCount = ['likes', 'reviews'];
 
@@ -29,6 +29,10 @@ class Ticket extends Model
 
     public function reviews() {
         return $this->morphMany(Review::class, 'reviewable');
+    }
+
+    public function categories() {
+        return $this->morphMany(Category::class, 'categoryable');
     }
 
     public function usertickets() {

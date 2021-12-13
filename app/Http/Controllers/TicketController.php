@@ -204,6 +204,24 @@ class TicketController extends Controller
         return response()->json($response, 200);
     }
 
+    public function claim(String $id) {
+        $response = [];
+
+        $wallet = User::find($id)->wallet;
+
+        if ($wallet->nfts > 0) {
+            $wallet->update([
+                'nfts' => $wallet->nfts - 1
+            ]);
+        }
+
+        $response['status'] = true;
+        $response['message'] = 'success';
+        $response['data'] = User::find($id);
+
+        return response()->json($response, 200);
+    }
+
     public function onPurchase(Request $request, String $id)
     {
         $response = [];

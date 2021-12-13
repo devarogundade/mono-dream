@@ -10,7 +10,7 @@ class Category extends Model
     use HasFactory;
 
     public function tickets() {
-        return $this->morphedByMany(Ticket::class, 'categoryable');
+        return $this->morphTo(Ticket::class, 'categoryable');
     }
 
 }
